@@ -1,3 +1,5 @@
+// static/js/dashboard/toast.js
+
 class Toast {
     constructor() {
       this.container = document.getElementById('toast-container');
