@@ -33,8 +33,8 @@ A running and training dashboard powered by **Strava API**, **OpenAI API**, and 
    pip install -r requirements.txt
    ```
 
-4. Set up environment variables:\
-   - Create a `.env` file in the project root:
+4. Set up environment variables:
+   - Create a `.env` file in the project root:<br>
      ```plaintext
      FLASK_APP=run.py
      FLASK_ENV=development
