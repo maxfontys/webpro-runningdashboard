@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="/static/dist/styles.css" rel="stylesheet">
+    <link href="/static/css/components/toast.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+
+    <link rel="stylesheet" href="/static/dist/main-C6G_3qQV.css">
+    <script type="module" src="/static/dist/main-Bsml_czk.js"></script>
+</head>
+
+<body class="bg-white">
+    <!-- Header -->
+    <header class="bg-strava text-white px-8 py-4 flex justify-between items-center">
+        <h1 class="text-2xl font-normal">Good to have you, {{ data.profile.name.split(' ')[0] }}.</h1>
+        <a href="/logout" class="btn-primary">Log out</a>
+    </header>    
+
+    <!-- Main Content -->
+    <main class="p-6 pt-12 md:pt-8 grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Left Sidebar -->
+        <section class="lg:col-span-3 space-y-6">
+            <!-- Profile Section -->
+            <div>
+                <img src="{{ data.profile.profile_picture }}" alt="Profile Picture" class="rounded-full mb-5">
+                <h2 class="font-medium text-3xl mb-2">{{ data.profile.name }}</h2>
+                <p class="text-lg flex items-center gap-1">
+                    <img class="w-4 mr-0.5" src="/static/images/Location.svg" alt="Woonplaats"> {{ data.profile.location }}
+                </p>
+                <p class="text-lg font-normal mt-2 text-neutral-500">You trained {{ data.monthly_stats.distance }} this month. <br> That's {{ data.monthly_stats.time }} of training!</p>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="mt-6">
+                <h3 class="font-medium text-2xl mb-4">Recent Activities</h3>
+                <ul class="space-y-4">
+                    {% for activity in data.activities %}
+                    <li class="flex items-center gap-4">
+                        <a href="{{ activity.url }}" target="_blank" rel="noopener noreferrer">
+                            <div id="map-{{ loop.index }}" class="w-20 h-20 rounded"></div>
+                        </a>
+                        <div>
+                            <p class="text-base font-normal mb-1">{{ activity.name }}</p>
+                            <p class="text-base">{{ activity.distance }} &nbsp; {{ activity.time }}</p>
+                            <p class="text-base text-gray-500">{{ activity.date }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        <!-- Last 4 Weeks -->
+        <div class="mt-8">
+            <h3 class="font-medium text-2xl mb-2">Last 4 Weeks</h3>
+            <ul>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Activities / Week</span>
+                    <span class="text-lg">{{ data.last_4_weeks.activities_per_week }}</span>
+                </li>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Avg Distance / Week</span>
+                    <span class="text-lg">{{ data.last_4_weeks.avg_distance_per_week }}</span>
+                </li>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Avg Time / Week</span>
+                    <span class="text-lg">{{ data.last_4_weeks.avg_time_per_week }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- This Year -->
+        <div class="mt-8">
+            <h3 class="font-medium text-2xl mb-2">This Year</h3>
+            <ul>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Activities</span>
+                    <span class="text-lg">{{ data.yearly_stats.activities }}</span>
+                </li>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Distance</span>
+                    <span class="text-lg">{{ data.yearly_stats.distance }}</span>
+                </li>
+                <li class="flex justify-between mb-1">
+                    <span class="text-lg">Time</span>
+                    <span class="text-lg">{{ data.yearly_stats.time }}</span>
+                </li>
+            </ul>
+        </div>
+            
+        </section>
+
+<!-- Center Content -->
+<section class="lg:col-span-5 space-y-4 lg:px-6">
+
+<!-- Weekly Stats -->
+<div>
+    <h3 class="font-medium text-3xl mb-6">Your weekly stats</h3>
+
+    <!-- Filter Buttons -->
+    <div class="flex mb-2 space-x-2">
+        <!-- All Sports Button -->
+        <button id="filter-all" class="filter-btn active" onclick="setActiveButton(this)">
+            All Sports
+        </button>
+
+        <!-- Run Button -->
+        <button id="filter-run" class="filter-btn" onclick="setActiveButton(this)">
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M8.688 0C8.025 0 7.38.215 6.85.613l-3.32 2.49-2.845.948A1 1 0 000 5c0 1.579.197 2.772.567 3.734.376.978.907 1.654 1.476 2.223.305.305.6.567.886.82.785.697 1.5 1.33 2.159 2.634 1.032 2.57 2.37 4.748 4.446 6.27C11.629 22.218 14.356 23 18 23c2.128 0 3.587-.553 4.549-1.411a4.378 4.378 0 001.408-2.628c.152-.987-.389-1.787-.967-2.25l-3.892-3.114a1 1 0 01-.329-.477l-3.094-9.726A2 2 0 0013.769 2h-1.436a2 2 0 00-1.2.4l-.57.428-.516-1.803A1.413 1.413 0 008.688 0zM8.05 2.213c.069-.051.143-.094.221-.127l1.168 4.086L12.333 4h1.436l.954 3H12v2h3.36l.318 1H13v2h3.314l.55 1.726a3 3 0 00.984 1.433l3.106 2.485c-.77.19-1.778.356-2.954.356-1.97 0-3.178-.431-4.046-1.087-.895-.677-1.546-1.675-2.251-3.056-.224-.437-.45-.907-.688-1.403C9.875 10.08 8.444 7.1 5.531 4.102zM3.743 5.14c2.902 2.858 4.254 5.664 5.441 8.126.25.517.49 1.018.738 1.502.732 1.432 1.55 2.777 2.827 3.74C14.053 19.495 15.72 20 18 20c1.492 0 2.754-.23 3.684-.479a2.285 2.285 0 01-.467.575c-.5.446-1.435.904-3.217.904-3.356 0-5.629-.718-7.284-1.931-1.663-1.22-2.823-3.028-3.788-5.44a1.012 1.012 0 00-.034-.076c-.853-1.708-1.947-2.673-2.79-3.417a14.61 14.61 0 01-.647-.593c-.431-.431-.775-.88-1.024-1.527-.21-.545-.367-1.271-.417-2.3z" fill=""></path></svg>
+            Run
+        </button>
+
+        <!-- Ride Button -->
+        <button id="filter-ride" class="filter-btn" onclick="setActiveButton(this)">
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M4 4v2h1.705l1.428 2.498-.836 1.672A5 5 0 109.9 16H11a1 1 0 00.868-.504l3.607-6.313.639 1.733a5 5 0 101.835-.806L16.434 6H19.5a.5.5 0 010 1H19v2h.5a2.5 2.5 0 000-5H15a1 1 0 00-.938 1.346L14.672 7H8.58L8.01 6H9V4zm4.325 6.585L10.277 14H6.618zM11.5 12.11L9.723 9h3.554zM5 12c.125 0 .25.008.37.023l-1.264 2.53A1 1 0 005 16h2.83A3.001 3.001 0 115 12zm11.848.91l1.06 2.874 1.876-.691-1.132-3.073a3 3 0 11-1.804.89z" fill=""></path>
+            </svg>
+            Ride
+        </button>
+    </div>
+</div>
+
+    <!-- Stats Display -->
+    <div id="weekly-stats" class="grid grid-cols-3 gap-6">
+        <div class="text-left">
+            <p class="text-lg text-gray-500 font-normal">Distance</p>
+            <p class="text-2xl font-medium text-gray-800" id="stats-distance">{{ data.weekly_stats.distance }}</p>
+        </div>
+        <div class="text-left">
+            <p class="text-lg text-gray-500 font-normal">Time</p>
+            <p class="text-2xl font-medium text-gray-800" id="stats-time">{{ data.weekly_stats.time }}</p>
+        </div>
+        <div class="text-left">
+            <p class="text-lg text-gray-500 font-normal">Elev Gain</p>
+            <p class="text-2xl font-medium text-gray-800" id="stats-elevation">{{ data.weekly_stats.elevation }}</p>
+        </div>
+    </div>
+
+    <!-- Weekly Stats Chart -->
+    <div style="margin-top: 1rem;">
+        <canvas id="weekly-stats-chart" class="m-0 h-48 w-full transform -translate-x-2"></canvas>
+    </div>
+</div>
+
+    <!-- Zone Focus -->
+<div class="!mb-8">
+    <h3 class="font-medium text-3xl mb-4">You spent the most time in</h3>
+    <div class="flex items-start gap-20">
+        <!-- Left Section: Training Focus -->
+        <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+                <p class="clr-strava font-medium text-xl">{{ data.zone_focus.training_focus }}</p>
+                <div id="zone-settings-root" class="inline-block"></div>
+            </div>
+            <p class="text-base text-gray-500">Training Focus</p>
+        </div>
+        <!-- Right Section: Average Heart Rate -->
+        <div class="flex flex-col">
+            <p class="font-medium text-xl text-black">{{ data.zone_focus.average_heart_rate }}</p>
+            <p class="text-base text-gray-500">Average Heart Rate</p>
+        </div>
+    </div>
+</div>
+
+    <!-- Heart Rate Trends -->
+    <div class="heart-rate-trends-section">
+        <h3 class="font-medium text-3xl mb-2">Heart Rate Trends</h3>
+        <div class="flex items-center">
+          <p class="text-gray-500 text-base">Heart rate trends for a</p>
+          <div class="pace-dropdown-wrapper ml-2">
+            <select class="pace-dropdown-btn">
+                    <option value="4:00–4:20">4:00–4:20 min/km</option>
+                    <option value="4:20–4:40">4:20–4:40 min/km</option>
+                    <option value="4:40–5:00">4:40–5:00 min/km</option>
+                    <option value="5:00–5:20">5:00–5:20 min/km</option>
+                    <option value="5:20–5:40">5:20–5:40 min/km</option>
+                    <option value="5:40–6:00">5:40–6:00 min/km</option>
+                    <option value="6:00–6:20">6:00–6:20 min/km</option>
+                    <option value="6:20–6:40" selected>6:20–6:40 min/km</option>
+                    <option value="6:40–7:00">6:40–7:00 min/km</option>
+                    <option value="7:00–7:20">7:00–7:20 min/km</option>
+                    <option value="7:20–7:40">7:20–7:40 min/km</option>
+                    <option value="7:40–8:00">7:40–8:00 min/km</option>          
+            </select>
+            <svg viewBox="0 0 20 20" class="dropdown-icon absolute right-2 pointer-events-none" width="20" height="20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.72 8.47a.75.75 0 0 1 1.06 0l3.47 3.47 3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 0 1 0-1.06Z"></path>
+            </svg>
+          </div>
+          <p class="text-gray-500 text-base ml-2"> pace over time.</p>
+        </div>
+      </div>
+
+      <!-- Heart Rate Trends Chart -->
+    <div style="margin-top: 0;">
+      <canvas id="heartRateTrendsChart" class="mt-0 transform -translate-x-2" style="width: 100%; max-width: 96%; min-height: 250px;"></canvas>
+    </div>
+   
+</section>
+
+    <!-- Right Sidebar -->
+<section class="bg-[#F7F7F7] flex flex-col p-5 rounded-2xl h-custom-mobile lg:h-custom-desktop lg:col-span-4">
+    <!-- Chat Canvas -->
+    <div class="flex flex-col flex-1 min-h-0">
+        <!-- Chat Area -->
+        <div class="flex-1 overflow-y-auto space-y-4 hide-scrollbar mb-4">
+            <!-- Chat Bubble -->
+            <div class="flex items-start">
+                <!-- Sparkle SVG Avatar -->
+                <div class="w-10 h-10 bg-[#FC5100] rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg id="Laag_2" data-name="Laag 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13.13 13.3" class="w-5 h-5">
+                        <g id="Laag_1-2" data-name="Laag 1">
+                            <path d="M1.77.32c.17-.3.55-.41.85-.25.1.06.19.14.25.25l.2.36c.21.38.52.69.89.89l.36.2c.3.17.41.55.25.85-.06.11-.14.19-.25.25l-.36.2c-.38.21-.69.52-.89.89l-.2.36c-.17.3-.55.41-.85.25-.1-.06-.19-.14-.25-.25l-.2-.36c-.21-.38-.52-.69-.89-.89l-.36-.2c-.3-.17-.41-.55-.25-.85.06-.11.14-.19.25-.25l.36-.2c.38-.21.69-.52.89-.89,0,0,.2-.36.2-.36Z" style="fill: #fff;"/>
+                            <path d="M9.02,3.96c-.18-1.17-1.85-1.19-2.06-.03l-.03.16c-.29,1.56-1.52,2.77-3.09,3.03-1.15.19-1.17,1.83-.03,2.05l.11.02c1.53.3,2.73,1.5,3.03,3.03l.03.17c.23,1.21,1.96,1.21,2.2,0l.02-.13c.3-1.55,1.52-2.76,3.08-3.05,1.18-.22,1.12-1.93-.07-2.11-1.63-.25-2.92-1.52-3.18-3.15h0ZM8.08,10.85c.51-1.15,1.41-2.09,2.54-2.65-1.15-.51-2.08-1.41-2.63-2.55-.52,1.1-1.39,1.98-2.49,2.51,1.15.56,2.07,1.51,2.57,2.69Z" style="fill: #fff; fill-rule: evenodd;"/>
+                        </g>
+                    </svg>
+                </div>
+                <!-- Chat Content -->
+                <div class="ml-4 max-w-[90%] bg-white border border-[#E7E7E7] rounded-xl py-3 px-4 text-[13px] font-normal fm-inter text-[#374151]">
+                    Hello! My name's Matthew. I'm your virtual assistant. I can help you train better for your next event, or answer questions on your training. How can I help?
+                </div>
+            </div>
+
+            <!-- "Answers personalized for Max" -->
+            <div class="flex items-center space-x-2 !mt-5 ml-2">
+                <!-- Static Image -->
+                <img src="/static/images/Person.png" alt="Person Icon" class="w-4 h-4">
+                <!-- Text -->
+                <p class="text-xs text-[#616A75] font-normal fm-inter">
+                    Answers personalized for <span class="font-semibold">{{ data.profile.name.split(' ')[0] }}</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="flex-shrink-0">
+            <div class="relative">
+                <!-- Input Field -->
+                <textarea 
+                    id="chatInput"
+                    rows="3"
+                    class="w-full border border-[#E7E7E7] rounded-xl p-4 text-sm fm-inter text-gray-800 placeholder-[#929292] focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none"
+                    placeholder="Ask Matthew anything..."
+                ></textarea>
+
+                <!-- Button Container -->
+                <div class="absolute top-1/2 right-3 -translate-y-[57%] flex items-center gap-1">
+                    <!-- Reset Button -->
+                    <button id="resetButton" class="p-1 rounded-lg transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="fill-[#CCCCCC] hover:fill-black transition-all duration-300 ease-in-out">
+                            <path d="M17 9.25C17 9.66421 16.6642 10 16.25 10C15.8358 10 15.5 9.66421 15.5 9.25C15.5 7.59315 14.1569 6.25 12.5 6.25H5.93402L7.05747 7.49828C7.33457 7.80616 7.30961 8.28038 7.00172 8.55747C6.69384 8.83456 6.21962 8.80961 5.94253 8.50172L3.69253 6.00172C3.42568 5.70523 3.43761 5.25173 3.71967 4.96967L5.96967 2.71967C6.26256 2.42678 6.73744 2.42678 7.03033 2.71967C7.32322 3.01256 7.32322 3.48744 7.03033 3.78033L6.06066 4.75H12.5C14.9853 4.75 17 6.76472 17 9.25Z"></path>
+                            <path d="M3 10.75C3 10.3358 3.33579 10 3.75 10C4.16421 10 4.5 10.3358 4.5 10.75C4.5 12.4069 5.84315 13.75 7.5 13.75H14.066L12.9425 12.5017C12.6654 12.1938 12.6904 11.7196 12.9983 11.4425C13.3062 11.1654 13.7804 11.1904 14.0575 11.4983L16.3075 13.9983C16.5743 14.2948 16.5624 14.7483 16.2803 15.0303L14.0303 17.2803C13.7374 17.5732 13.2626 17.5732 12.9697 17.2803C12.6768 16.9874 12.6768 16.5126 12.9697 16.2197L13.9393 15.25H7.5C5.01472 15.25 3 13.2353 3 10.75Z"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Send Button -->
+                    <button id="sendButton" class="p-1 rounded-lg transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 14 16" class="fill-[#CCCCCC] hover:fill-black transition-all duration-300 ease-in-out">
+                            <path d="M1.0615 0.64157C1.30468 0.466297 1.62886 0.452657 1.8859 0.606882L13.1359 7.35688C13.3618 7.49242 13.5 7.73655 13.5 8C13.5 8.26345 13.3618 8.50758 13.1359 8.64312L1.8859 15.3931C1.62886 15.5473 1.30468 15.5337 1.0615 15.3584C0.818323 15.1832 0.702866 14.8799 0.767893 14.5873L2.06507 8.75L6 8.75C6.41421 8.75 6.75 8.41421 6.75 8C6.75 7.58579 6.41421 7.25 6 7.25L2.06507 7.25L0.767893 1.4127C0.702866 1.12008 0.818323 0.816842 1.0615 0.64157Z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+      
+    </main>
+
+<!-- Scripts -->
+
+<script id="activities-data" type="application/json">
+    {{ data.activities|tojson }}
+</script> 
+
+<script id="pace-trends-data" type="application/json">
+    {{ data.pace_trends_json | safe }}
+</script>
+
+<script id="weekly-stats-data" type="application/json">
+    {
+        "labels": {{ data.weekly_chart.labels | tojson | safe }},
+        "distances": {{ data.weekly_chart.distances | tojson | safe }}
+    }
+</script>
+
+<script type="module" src="/static/js/main.js"></script>
+
+<div id="toast-container" class="fixed bottom-4 left-4 z-50"></div>
+
+<!-- Tailwind safelist -->
+<div class="hidden bg-green-500 bg-red-500 animate-fade-in animate-fade-out"></div>
+
+</body>
+</html>
+

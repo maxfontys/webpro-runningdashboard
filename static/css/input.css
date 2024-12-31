@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '.static/css/components/toast.css';
+@import './components/test.css';
+
+@font-face {
+    font-family: 'sohne';
+    src: url('/static/fonts/Sohne-Buch.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'sohne';
+    src: url('/static/fonts/Sohne-Kraftig.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+.fm-inter{
+    font-family: Inter;
+}
+
+@media screen and (min-width: 1024px){
+section.col-span-5.space-y-10.px-6.lg\:px-4.mt-6 {
+    padding-right: 0;
+    }
+}
+
+.bg-strava{
+    background-color: #FB5100;
+}
+
+.clr-strava{
+    color: #FB5100;
+}
+
+/* Pace selection dropdown */
+
+.pace-dropdown-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+.pace-dropdown-btn {
+    appearance: none;
+    font-family: Inter, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 20px;
+    color: #303030;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    padding: 6px 30px 6px 12px;
+    box-shadow: 0rem -.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem .0625rem rgba(0, 0, 0, .1) inset, 0rem .03125rem 0rem .09375rem #FFF inset;
+    cursor: pointer;
+}
+  
+.pace-dropdown-btn:hover{
+    background-color: #fafafa;
+}
+
+.pace-dropdown-btn:active {
+    background-color: #f7f7f7;
+    box-shadow: -.0625rem 0rem .0625rem 0rem rgba(26, 26, 26, .122) inset, .0625rem 0rem .0625rem 0rem rgba(26, 26, 26, .122) inset, 0rem .125rem .0625rem 0rem rgba(26, 26, 26, .2) inset;
+}
+  
+.dropdown-icon {
+    position: absolute;
+    right: 7px;
+    /* top: 50%;
+    transform: translateY(-50%); */
+    pointer-events: none;
+    fill: rgb(74, 74, 74);
+}
+
+/* Filter buttons */
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ddd; /* Default light grey border */
+    border-radius: 0.6rem;
+    padding: 0.35rem 0.85rem;
+    background-color: white;
+    color: #444;
+    font-family: 'Söhne', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn svg {
+    transition: fill 0.2s ease;
+}
+
+.filter-btn.active {
+    border-color: #FB5100;
+    color: #FB5100;
+}
+
+.filter-btn.active svg path {
+    fill: #FB5100; /* Active state - Orange */
+}
+
+.filter-btn:hover {
+    border-color: #FB5100;
+    background-color: #fdf2ec;
+}
+
+.filter-btn:hover:not(.active) {
+    color: #555;
+}
+
+.filter-btn:not(.active) svg path {
+    fill: #888; /* Inactive state - Grey */
+}
+
+.filter-btn:hover:not(.active) svg path {
+    fill: #FB5100; /* Hover fill becomes orange */
+}
+
+/* Chat */
+
+.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Updated thinking animation */
+
+.thinking-dots {
+    display: flex;
+    gap: 3px;
+    padding: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    animation: surfWave 0.8s ease-in-out infinite;
+}
+
+/* Button primary */
+
+.btn-primary{
+    appearance: none;
+    font-family: Inter, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 20px;
+    color: #303030;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    padding: 6px 12px 6px 12px;
+    box-shadow: 0rem -.0625rem 0rem 0rem #b5b5b5 inset, 0rem 0rem 0rem .0625rem rgba(0, 0, 0, .1) inset, 0rem .03125rem 0rem .09375rem #FFF inset;
+    cursor: pointer;
+}
+
+.btn-primary:hover{
+    background-color: #fafafa;
+}
+
+.btn-primary:active {
+    background-color: #f7f7f7;
+    box-shadow: -.0625rem 0rem .0625rem 0rem rgba(26, 26, 26, .122) inset, .0625rem 0rem .0625rem 0rem rgba(26, 26, 26, .122) inset, 0rem .125rem .0625rem 0rem rgba(26, 26, 26, .2) inset;
+}
+
+/* Button secondary (black) */
+
+.btn-secondary {
+    appearance: none;
+    font-family: Inter, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 20px;
+    color: #fff;
+    background-color: rgb(48, 48, 48);
+    background-image: linear-gradient(
+        rgba(48, 48, 48, 0) 63.53%,
+        rgba(255, 255, 255, 0.15)
+      );
+    border-radius: 8px;
+    padding: 6px 12px 6px 12px;
+    box-shadow: rgba(0, 0, 0, 0.8) 0px -1px 0px 1px inset,
+        rgb(48, 48, 48) 0px 0px 0px 1px inset,
+        rgba(255, 255, 255, 0.25) 0px 0.5px 0px 1.5px inset;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: #1a1a1a;
+    box-shadow: 0rem -0.0625rem 0rem 0.0625rem rgba(0, 0, 0, 0.8) inset,
+      0rem 0rem 0rem 0.0625rem #303030 inset,
+      0rem 0.03125rem 0rem 0.09375rem hsla(0, 0%, 100%, 0.25) inset;
+  }
+
+.btn-secondary:active{
+    box-shadow: 0rem 0.1875rem 0rem 0rem #000 inset;
+    background-color: #1a1a1a;
+    color: #fff
+}
+
+.btn-secondary .btn-text {
+    display: inline-block; /* Ensures transform applies */
+    position: relative;    /* Allows relative transformation */
+  }
+  
+.btn-secondary:active .btn-text {
+    transform: translate3d(0, 0.0625rem, 0); /* Moves text slightly down */
+}  
+
+/* Chat thinking */
+
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes surfWave {
+    0%, 30%, 100% { 
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+    50% { 
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+    80% { 
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+}
+
+.fake-class-that-does-not-exist{
+    display: flex;
+}

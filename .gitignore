@@ -1,0 +1,24 @@
+# Environment variables
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Node.js dependencies
+node_modules/
+react-modal/node_modules/
+
+# Flask instance folder
+instance/
+
+# Log files
+*.log
+
+# VSCode settings
+.vscode/
+
+# Unnecessary files
+.DS_Store
+structure_cleaned.txt
+generate_tree.py
