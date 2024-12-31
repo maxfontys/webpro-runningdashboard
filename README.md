@@ -1,7 +1,8 @@
 # Training Dashboard Project
 
-A running and training dashboard powered by **Strava API**, **OpenAI API**, and **React**. The application visualizes user activities, calculates statistics, and integrates a chatbot for fitness advice.
+I developed a web application for athletes using the **Strava API** to showcase key metrics and insights. This project was part of the final Graduation Courses (GCs) for the Digital Business Concepts program at Fontys University in Tilburg (2024). Specifically, it was completed for the Webprogramming, Custom Code course.
 
+The dashboard provides essential running data, including weekly mileage, recent activities, total training hours, heart rate trends, and zone training analysis. Additionally, it features a fully integrated chatbot powered by the **OpenAI API**, offering personalized training advice and answering user queries.
 ## Features
 
 - **Dashboard**: Displays recent activities, weekly stats, heart rate trends, and training zones.
@@ -34,7 +35,8 @@ A running and training dashboard powered by **Strava API**, **OpenAI API**, and 
    ```
 
 4. Set up environment variables:
-   - Create a `.env` file in the project root:<br>
+   - Create a `.env` file in the project root:  
+   
      ```plaintext
      FLASK_APP=run.py
      FLASK_ENV=development
@@ -86,8 +88,6 @@ A running and training dashboard powered by **Strava API**, **OpenAI API**, and 
 - **Radix UI**: Accessible UI components.
 - **Tailwind CSS**: Styling.
 - **Vite**: Build tool for fast development.
-
-
 
 ## Project Structure
 
