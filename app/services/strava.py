@@ -2,6 +2,8 @@ import datetime
 from datetime import timedelta
 import requests
 
+# Function 1: Get raw activities
+
 def get_raw_activities(access_token):
     base_url = "https://www.strava.com/api/v3"
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -32,6 +34,8 @@ def get_raw_activities(access_token):
         page += 1
 
     return all_activities
+
+# Function 2: Process the raw activities 
 
 def process_activities(raw_activities):
     valid_activities = []

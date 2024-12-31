@@ -15,6 +15,7 @@ def save_settings():
     try:
         # Get the data from the request
         data = request.get_json()
+        # print(f"Incoming data to save: {data}")  # Debug incoming settings
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
@@ -82,6 +83,18 @@ def calculate_zone():
     try:
         data = request.get_json()
         average_hr = data.get('average_hr')
+        # print(f"Average HR used for zone calculation: {average_hr}")  # Debugging line
+
+        # Strip "bpm" if present and convert to float
+        if isinstance(average_hr, str) and 'bpm' in average_hr:
+            average_hr = average_hr.replace(' bpm', '')
+
+        # Early return if average_hr is None or not provided
+        if average_hr is None:
+            return jsonify({
+                "zone": "Unknown Zone",
+                "name": "No heart rate data available"
+            }), 200
 
         # Load saved settings from file
         settings = get_settings_from_file()
@@ -91,6 +104,15 @@ def calculate_zone():
 
         max_hr = settings['maxHR']
         saved_zones = settings['zones']
+
+        # Convert average_hr to float/int if it's a string
+        try:
+            average_hr = float(average_hr)
+        except (TypeError, ValueError):
+            return jsonify({
+                "zone": "Invalid",
+                "name": "Invalid heart rate value"
+            }), 200
 
         # Validation for edge cases
         if average_hr > max_hr:
@@ -104,20 +126,27 @@ def calculate_zone():
                 "name": "Heart rate cannot be negative"
             }), 200
 
+        # # Debug line for percentage calculation
+        # hr_percentage = (average_hr / max_hr) * 100
+        # print(f"Debug: Average HR: {average_hr}, Max HR: {max_hr}, Percentage: {hr_percentage:.2f}%")
+
         # Determine which zone the heart rate falls into
         for zone_num, zone_data in saved_zones.items():
-            min_hr = (zone_data['min'] / 100) * max_hr
-            max_hr_zone = (zone_data['max'] / 100) * max_hr
+            min_hr = round((zone_data['min'] / 100) * max_hr)
+            # Extend the upper limit of the zone to include all decimals
+            max_hr_zone = round(((zone_data['max'] + 0.999999) / 100) * max_hr)
+
+            # print(f"Debug: Zone {zone_num} range: {min_hr}-{max_hr_zone} bpm") # Debug line
+
             if min_hr <= average_hr <= max_hr_zone:
                 return jsonify({
                     "zone": f"Zone {zone_num}",
                     "name": zone_data['name']
                 }), 200
 
-        # If no zone matches, return "Unknown Zone"
         return jsonify({
             "zone": "Unknown Zone",
-            "name": None
+            "name": "No matching zone found"
         }), 200
     except Exception as e:
         print(f"Error in calculate_zone: {e}")

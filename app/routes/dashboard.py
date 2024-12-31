@@ -243,21 +243,25 @@ def dashboard():
         
         # Use saved max HR directly
         max_hr = saved_max_hr
-        
+        print(f"Using saved max HR: {max_hr}")
+
         # Convert percentage-based zones to actual heart rates
         zones = {}
         for zone_num, zone_data in saved_zones.items():
-            min_hr = (zone_data['min'] / 100) * max_hr
-            max_hr_zone = (zone_data['max'] / 100) * max_hr
+            min_hr = round((zone_data['min'] / 100) * max_hr)  # Use round()
+            # Extend the upper limit to include all decimals
+            max_hr_zone = round(((zone_data['max'] + 0.999999) / 100) * max_hr)
             zone_name = f"Zone {zone_num}"
             zones[zone_name] = (min_hr, max_hr_zone)
+            print(f"Zone {zone_name}: {int(min_hr)}-{int(max_hr_zone)} bpm")
     else:
+        print("No saved settings found, using defaults.")
         # Default calculations
         max_hr = profile.get('max_heart_rate') or (220 - profile.get('age', 30))
         zones = {
             "Zone 1": (0.50 * max_hr, 0.59 * max_hr),  # Recovery
             "Zone 2": (0.60 * max_hr, 0.69 * max_hr),   # Aerobic Endurance
-            "Zone 3": (0.7 * max_hr, 0.79 * max_hr),   # Tempo
+            "Zone 3": (0.70 * max_hr, 0.79 * max_hr),   # Tempo
             "Zone 4": (0.80 * max_hr, 0.89 * max_hr),  # Threshold
             "Zone 5": (0.90 * max_hr, max_hr),         # VO2 Max
         }
@@ -269,12 +273,14 @@ def dashboard():
             activity_averages.append(activity['average_heartrate'])
 
     average_heart_rate = int(sum(activity_averages) / len(activity_averages)) if activity_averages else 0
+    print(f"Calculated average HR: {average_heart_rate}")
 
     # Determine zone based on average heart rate
     zone_focus = None
     for zone, (low, high) in zones.items():
         if low <= average_heart_rate <= high:
             zone_focus = zone
+            print(f"Average HR {average_heart_rate} falls into {zone}")
             break
 
     zone_names = {
@@ -285,10 +291,8 @@ def dashboard():
         "Zone 5": "VO2 Max"
     }
 
-    for zone, (low, high) in zones.items():
-        print(f"{zone}: {int(low)}-{int(high)} bpm")
-        
     zone_focus_display = f"{zone_focus}: {zone_names[zone_focus]}" if zone_focus else "Unknown Zone"
+    print(f"Zone focus display: {zone_focus_display}")
 
     data["zone_focus"] = {
         "training_focus": zone_focus_display,

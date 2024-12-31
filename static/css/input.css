@@ -239,7 +239,3 @@ section.col-span-5.space-y-10.px-6.lg\:px-4.mt-6 {
         opacity: 0.3;
     }
 }
-
-.fake-class-that-does-not-exist{
-    display: flex;
-}

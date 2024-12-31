@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Info, AlertCircle } from 'lucide-react';
 import { toast } from '../../static/js/dashboard/toast.js';
 
-const ZoneSettingsModal = ({ onSave }) => {
+const ZoneSettingsModal = ({ averageHR }) => {
   const savedSettings = JSON.parse(localStorage.getItem('hrSettings') || '{}');
 
   const defaultZones = {
@@ -27,8 +27,9 @@ const ZoneSettingsModal = ({ onSave }) => {
   };
 
   const handleSave = () => {
+    console.log('Saving settings:', { maxHR, zones });  // Debug frontend state
     const errors = [];
-    let prevMax = 0;
+    let prevMax = -1;
 
     // Validate zones
     Object.entries(zones).forEach(([zone, { min, max }]) => {
@@ -39,9 +40,12 @@ const ZoneSettingsModal = ({ onSave }) => {
       prevMax = max;
     });
 
+    // Ensure no gaps between zones
     const zoneValues = Object.values(zones);
     for (let i = 1; i < zoneValues.length; i++) {
-      if (zoneValues[i].min > zoneValues[i - 1].max + 1) {
+      const previousMax = zoneValues[i - 1].max;
+      const currentMin = zoneValues[i].min;
+      if (currentMin !== previousMax + 1) {
         errors.push(`There is a gap between Zone ${i} and Zone ${i + 1}.`);
       }
     }
@@ -69,11 +73,14 @@ const ZoneSettingsModal = ({ onSave }) => {
           localStorage.setItem('hrSettings', JSON.stringify(settings));
           toast.showToast('Settings saved successfully!', 'success');
 
+          // Strip "bpm" from averageHR and convert to number
+          const averageHRValue = parseFloat(averageHR.replace(' bpm', ''));
+          
           // Fetch updated zone based on the new settings
           fetch('http://127.0.0.1:5000/api/calculate-zone', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ average_hr: 136 }), // Replace with dynamic HR
+            body: JSON.stringify({ average_hr: averageHR }), // Use the prop here
           })
             .then((res) => res.json())
             .then((zoneData) => {
