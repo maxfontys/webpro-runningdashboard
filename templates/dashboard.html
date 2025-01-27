@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Running Dashboard</title>
     <link href="/static/dist/styles.css" rel="stylesheet">
     <link href="/static/css/components/toast.css" rel="stylesheet">
     <!-- Favicon -->
@@ -16,9 +16,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-
+    <!-- Link to final JS and CSS for React modal -->
     <link rel="stylesheet" href="/static/dist/main-C6G_3qQV.css">
-    <script type="module" src="/static/dist/main-BZKCGH5l.js"></script>
+    <script type="module" src="/static/dist/main-DXFtKirH.js"></script>
 </head>
 
 <body class="bg-white">
@@ -243,17 +243,17 @@
 
         <!-- Input Box -->
         <div class="flex-shrink-0">
-            <div class="relative">
+            <div class="relative w-full">
                 <!-- Input Field -->
                 <textarea 
-                    id="chatInput"
-                    rows="3"
-                    class="w-full border border-[#E7E7E7] rounded-xl p-4 text-sm fm-inter text-gray-800 placeholder-[#929292] focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none"
-                    placeholder="Ask Matthew anything..."
+                id="chatInput"
+                rows="3"
+                class="w-full border border-[#E7E7E7] rounded-xl p-4 pr-20 text-sm fm-inter text-gray-800 placeholder-[#929292] focus:outline-none focus:ring-1 focus:ring-gray-300 resize-none"
+                placeholder="Ask Matthew anything..."
                 ></textarea>
 
                 <!-- Button Container -->
-                <div class="absolute top-1/2 right-3 -translate-y-[57%] flex items-center gap-1">
+                <div class="absolute top-1/2 right-3 -translate-y-1/2 flex items-center gap-1">
                     <!-- Reset Button -->
                     <button id="resetButton" class="p-1 rounded-lg transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="fill-[#CCCCCC] hover:fill-black transition-all duration-300 ease-in-out">

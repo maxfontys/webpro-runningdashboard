@@ -75,7 +75,7 @@ const ZoneSettingsModal = ({ averageHR }) => {
 
           // Strip "bpm" from averageHR and convert to number
           const averageHRValue = parseFloat(averageHR.replace(' bpm', ''));
-          
+
           // Fetch updated zone based on the new settings
           fetch('http://127.0.0.1:5000/api/calculate-zone', {
             method: 'POST',
@@ -161,15 +161,24 @@ const ZoneSettingsModal = ({ averageHR }) => {
               <label className="block text-sm font-medium mb-2">
                 Maximum Heart Rate (bpm)
               </label>
-              <input
-                type="number"
-                value={maxHR}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value) || 200;
-                  setMaxHR(value > 220 ? 220 : value);
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-              />
+                <input
+                  type="number"
+                  value={maxHR}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+
+                    // Allow empty input without forcing a default value
+                    if (newValue === "") {
+                      setMaxHR(""); 
+                      return;
+                    }
+
+                    // Parse the value and enforce max limit
+                    const parsedValue = parseInt(newValue, 10);
+                    setMaxHR(parsedValue > 220 ? 220 : parsedValue);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                />
             </div>
 
             <div className="space-y-4">

@@ -1,1 +1,1 @@
-{"maxHR": 200, "zones": {"1": {"min": 50, "max": 59, "name": "Recovery"}, "2": {"min": 60, "max": 69, "name": "Aerobic Endurance"}, "3": {"min": 70, "max": 79, "name": "Tempo"}, "4": {"min": 80, "max": 89, "name": "Threshold"}, "5": {"min": 90, "max": 100, "name": "VO2 Max"}}}
+{"maxHR": 170, "zones": {"1": {"min": 50, "max": 59, "name": "Recovery"}, "2": {"min": 60, "max": 79, "name": "Aerobic Endurance"}, "3": {"min": 80, "max": 84, "name": "Tempo"}, "4": {"min": 85, "max": 90, "name": "Threshold"}, "5": {"min": 91, "max": 100, "name": "VO2 Max"}}}
